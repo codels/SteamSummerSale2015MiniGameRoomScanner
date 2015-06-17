@@ -4,11 +4,17 @@
           media="print, projection, screen"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="http://tablesorter.com/__jquery.tablesorter.min.js"></script>
+    <script type='text/javascript' src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
 
     <style>
         table.tablesorter tr.even:hover td,
         table.tablesorter tr.odd:hover td {
             background-color: #55c7bf;
+        }
+
+        table.tablesorter tr.me-room td {
+            font-weight: bold !important;
+            background-color: #d7b3f0 !important;
         }
     </style>
 </head>
@@ -19,6 +25,7 @@ mb_internal_encoding('UTF-8');
 $objectsAllRooms = json_decode(file_get_contents('http://steamga.me/data/api/all.json'));
 $objectsTopRooms = json_decode(file_get_contents('http://steamga.me/data/api/leaderboard.json'));
 $roomsName = json_decode(file_get_contents('./rooms_name.json'));
+$roomsMe = json_decode(file_get_contents('./me_rooms.json'));
 
 $endDateTime = new DateTime();
 $endDateTime->setTime(19, 00, 00);
@@ -62,7 +69,16 @@ foreach ($objectsAllRooms as $objectRoom) {
             }
         }
     }
+/*
+    $objectRoom->me = false;
 
+    foreach ($roomsMe as $room) {
+        if ($room->id == $objectRoom->id) {
+            $objectRoom->me = true;
+            break;
+        }
+    }
+*/
     // format
     $objectRoom->possible_max_level_format = number_format($objectRoom->possible_max_level, 0, '.', ' ');
     $objectRoom->clicks_format = number_format($objectRoom->clicks, 0, '.', ' ');
@@ -93,10 +109,11 @@ echo "<table  id='tablesorter-demo' class='tablesorter' border='0' cellpadding='
     <th>Level per wormholes</th>
     <th>Possible max level</th>
     <th>Wormholes</th>
+    <th>ok</th>
 </tr>
 </thead><tbody>";
 foreach ($array as $objectRoom) {
-    echo '<tr>';
+    echo "<tr class='" . ('') . "' id='{$objectRoom->id}'>";
 
     echo "
 <td>".(++$i)."</td>
@@ -112,6 +129,7 @@ foreach ($array as $objectRoom) {
 <td>{$objectRoom->lvl_per_wh}</td>
 <td data-value={$objectRoom->possible_max_level}>{$objectRoom->possible_max_level_format}</td>
 <td data-value={$objectRoom->wormholes}>{$objectRoom->wormholes_format}</td>
+<td><a href='javascript::void(0);' onclick='func_ok({$objectRoom->id})'>ok</a></td>
 ";
 
 //var_dump($res);
@@ -148,6 +166,39 @@ echo '</tbody></table>';
         });
         //$("#options").tablesorter({sortList: [[0,0]], headers: { 3:{sorter: false}, 4:{sorter: false}}});
     });
+
+    function updateRooms() {
+        $('.me-room').removeClass('me-room');
+        var meRooms = getMeRooms();
+        for(var i = 0; i < meRooms.length; i++) {
+            $('#' + meRooms[i]).addClass('me-room');
+        }
+    }
+
+    function getMeRooms() {
+        return JSON.parse(localStorage.getItem('meRooms'));
+    }
+
+    function func_ok(roomId) {
+        var meRooms = getMeRooms();
+
+        if (!_.isArray(meRooms)) {
+            meRooms = [];
+        }
+
+        if (_.indexOf(meRooms, roomId) == -1) {
+            meRooms.push(roomId);
+        } else {
+            meRooms = _.without(meRooms, roomId);
+        }
+
+        localStorage.setItem('meRooms', JSON.stringify(meRooms));
+
+        updateRooms();
+    }
+
+    updateRooms();
+
 </script>
 
 </body>
