@@ -6,11 +6,12 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
         vm.newRooms = [];
         vm.autoRefresh = true;
         vm.maxPlayers = 1400;
-        vm.accountsSearch = [10098050, 133090071, 68758347];
+        vm.accountsSearch = [10098050, 133090071];
         vm.is_start = false;
         vm.lastRoomId = 45620;
         vm.refreshTimeout = 10000;
         vm.foundedRooms = [];
+        vm.stalkRoom = 0;
 
         vm.start = function () {
             vm.is_start = true;
@@ -28,6 +29,21 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
 
         vm.stop = function () {
             vm.is_start = false;
+        };
+
+        vm.stalk = function () {
+            $http.post('./account_in_room.php', {
+                room_id: vm.stalkRoom,
+                account_id: vm.accountsSearch
+            }).then(function (response) {
+                if (!response.data.exists) {
+                    var alert = new Audio('alert.mp3');
+                    alert.play();
+                }
+                $timeout(function () {
+                        vm.stalk();
+                }, 5000);
+            })
         };
 
         vm.searchNewRoom = function () {

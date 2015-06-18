@@ -56,6 +56,10 @@
 <div data-ng-controller="controllerVSecond as vm">
     <h2>КПП — {{vm.version}}</h2>
 
+    <H3>Stalking</H3>
+    Room ID: <input type="number" data-ng-model="vm.stalkRoom">
+    <button data-ng-click="vm.stalk()">PRESS ME!</button>
+
     <h3>Search new Room</h3>
     <button data-ng-click="vm.startSearch()">Start scan</button>
     <button data-ng-click="vm.stop()">Stop scan</button>
