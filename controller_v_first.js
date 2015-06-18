@@ -29,25 +29,27 @@ applicationKPP.controller('controllerVFirst', function ($http, $timeout, $interv
                 return;
             }
 
-            $http.post('./room_status.php', {room_id: vm.roomLastId}).then(function (response) {
+            $http.post('./room_status.php', {room_id: vm.roomLastId, timeout: 1000}).then(function (response) {
                 var timeoutTime = 0;
-                if (response.data.status == -1) {
-                    //
-                    timeoutTime = 1000;
-                } else if (response.data.status == 3) {
-                    ++vm.roomLastId;
-                    //nothing
-                } else {
-                    ++vm.roomLastId;
-                    if (response.data.status != 2 || !vm.ignoreStartedRoom) {
-                        var room = {
-                            id: response.data.room_id,
-                            players: response.data.players,
-                            founded: false,
-                            disabled: false
-                        };
-                        vm.roomsScanning.push(room);
-                        vm.scanRoom(room);
+                if (_.has(response.data, 'room_id') && _.has(response.data, 'status')) {
+                    if (response.data.status == -1) {
+                        //
+                        timeoutTime = 1000;
+                    } else if (response.data.status == 3) {
+                        ++vm.roomLastId;
+                        //nothing
+                    } else {
+                        ++vm.roomLastId;
+                        if (response.data.status != 2 || !vm.ignoreStartedRoom) {
+                            var room = {
+                                id: response.data.room_id,
+                                players: response.data.players,
+                                founded: false,
+                                disabled: false
+                            };
+                            vm.roomsScanning.push(room);
+                            vm.scanRoom(room);
+                        }
                     }
                 }
                 $timeout(vm.scanLastId, timeoutTime);
@@ -60,7 +62,8 @@ applicationKPP.controller('controllerVFirst', function ($http, $timeout, $interv
             }
             $http.post('./account_in_room.php', {
                 room_id: room.id,
-                account_id: vm.accountsSearch
+                account_id: vm.accountsSearch,
+                timeout: 1000
             }).then(function (response) {
                 room.founded = response.data.exists || false;
                 room.players = response.data.players || -1;
@@ -77,71 +80,5 @@ applicationKPP.controller('controllerVFirst', function ($http, $timeout, $interv
             vm.currentRoomId = vm.minRoomId;
             vm.searchNewRoom();
         };
-
-
-/*
-        vm.scanRoomsStatus = function () {
-            if (!vm.is_start) {
-                return;
-            }
-            $http.post('./room_status.php', {room_id: vm.currentRoomId}).then(function (response) {
-                if (!vm.minIsBlocked) {
-                    if (response.data.room_id >= vm.minRoomId) {
-                        if (response.data.status == 3) { //end
-                            vm.minRoomId = response.data.room_id + 1;
-                        }
-                        if (vm.search_only_not_started) {
-                            if (response.data.status == 2) { // process
-                                vm.minRoomId = response.data.room_id + 1;
-                            }
-                        }
-                    }
-                }
-
-                if (response.data.status >= 1 && response.data.status <= 2) {
-                    vm.scanAccountInRoom(parseInt(response.data.room_id, 10));
-                }
-
-                if (response.data.status == -1) {
-                    if (!vm.maxIsBlocked && response.data.room_id > vm.maxRoomId) {
-                        vm.maxRoomId = parseInt(response.data.room_id, 10);
-                    }
-                } else {
-                    vm.currentRoomId = vm.currentRoomId + 1;
-                    if (!vm.maxIsBlocked && response.data.room_id == vm.maxRoomId) {
-                        vm.maxRoomId = response.data.room_id + 1;
-                    }
-                }
-
-                if (response.data.room_id >= vm.maxRoomId) {
-                    vm.currentRoomId = parseInt(vm.minRoomId, 10);
-                }
-
-                if (!vm.maxIsBlocked) {
-                    if (vm.minRoomId > vm.maxRoomId) {
-                        vm.maxRoomId = parseInt(vm.minRoomId);
-                    }
-                }
-
-                vm.scanRoomsStatus();
-            })
-        };
-
-        vm.scanAccountInRoom = function (roomId) {
-            $http.post('./account_in_room.php', {
-                room_id: roomId,
-                account_id: vm.accountsSearch
-            }).then(function (response) {
-                if (_.indexOf(response.data.room_id, vm.rooms) == -1) {
-                    if (response.data.exists) {
-                        vm.rooms.push(response.data.room_id);
-                    }
-                } else {
-                    if (!response.data.exists) {
-                        vm.rooms = _.without(vm.rooms, response.data.room_id);
-                    }
-                }
-            })
-        };*/
     }
 );
