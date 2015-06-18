@@ -1,5 +1,5 @@
-angular.module('todoApp', [])
-    .controller('TodoListController', function ($http, $timeout, $interval) {
+angular.module('applicationKPP', [])
+    .controller('controllerVSecond', function ($http, $timeout, $interval) {
         var vm = this;
 
         vm.version = "0.2 Bizarre";
