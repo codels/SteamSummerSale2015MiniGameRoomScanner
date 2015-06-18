@@ -2,8 +2,9 @@ angular.module('todoApp', [])
     .controller('TodoListController', function ($http, $timeout, $interval) {
         var vm = this;
 
+        vm.version = "0.2 Bizarre";
         vm.minRoomId = 44347;
-        vm.maxRoomId = 45360;
+        vm.maxRoomId = 45585;
         vm.currentRoomId = 0;
         vm.newRooms = [];
         vm.rooms = [];
@@ -15,7 +16,7 @@ angular.module('todoApp', [])
         vm.search_only_not_started = false;
         vm.minIsBlocked = false;
         vm.maxIsBlocked = false;
-        vm.lastRoomId = 45530;
+        vm.lastRoomId = 45585;
         vm.threads = 5;
         vm.range = 100;
 
@@ -58,6 +59,7 @@ angular.module('todoApp', [])
                     if (vm.autoRefresh) {
                         vm.startRefreshing(vm.currentRoomId);
                     }
+                    vm.lastRoomId = vm.currentRoomId;
                     vm.currentRoomId++;
                     vm.newRooms.push({id: vm.currentRoomId, status: 0});
                     vm.searchNewRoom();
@@ -140,11 +142,11 @@ angular.module('todoApp', [])
             }).then(function (response) {
                 if (_.indexOf(response.data.room_id, vm.rooms) == -1) {
                     if (response.data.exists) {
-                        vm.foundedRooms.push(response.data.room_id);
+                        vm.rooms.push(response.data.room_id);
                     }
                 } else {
                     if (!response.data.exists) {
-                        vm.foundedRooms = _.without(vm.foundedRooms, response.data.room_id);
+                        vm.rooms = _.without(vm.rooms, response.data.room_id);
                     }
                 }
             })

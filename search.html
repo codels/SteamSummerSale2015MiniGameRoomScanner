@@ -23,6 +23,7 @@
 </head>
 <body>
 <div ng-controller="TodoListController as todoList">
+    <h2>КПП — {{todoList.version}}</h2>
     <button ng-click="todoList.start()">start scan</button>
     <button ng-click="todoList.stop()">stop scan</button>
     <br>
@@ -43,6 +44,7 @@
     <hr>
     <h3>Search new Room</h3>
     <button data-ng-click="todoList.startSearch()">Start scan</button>
+    <button data-ng-click="todoList.stop()">Stop scan</button>
     <br>
     Last room ID: <input type="number" data-ng-model="todoList.lastRoomId"> Autorefresh: <input
         type="checkbox" data-ng-model="todoList.autoRefresh">
