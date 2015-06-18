@@ -3,6 +3,23 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
     <script type='text/javascript' src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
     <script src="todo.js"></script>
+    <style>
+        .danger {
+            color: darkred
+        }
+
+        .warning {
+            color: darkorange
+        }
+
+        .ok {
+            color: darkgreen
+        }
+
+        .old {
+            color: gray
+        }
+    </style>
 </head>
 <body>
 <div ng-controller="TodoListController as todoList">
@@ -15,8 +32,8 @@
     Max scan room id: <input type="number" ng-model="todoList.maxRoomId"> (Block <input type="checkbox"
                                                                                         ng-model="todoList.maxIsBlocked">)<br>
     Only not started room: <input type="checkbox" ng-model="todoList.search_only_not_started"><br>
-<!--    Threads: <input type="number" data-ng-model="todoList.threads"><br>
-    Rooms in thread: <input type="number" data-ng-model="todoList.range"><br>-->
+    <!--    Threads: <input type="number" data-ng-model="todoList.threads"><br>
+        Rooms in thread: <input type="number" data-ng-model="todoList.range"><br>-->
     Rooms found:<br>
     <table>
         <tr ng-repeat="roomId in todoList.rooms">
@@ -26,14 +43,16 @@
     <hr>
     <h3>Search new Room</h3>
     Last room ID: <input type="number" data-ng-model="todoList.lastRoomId">
-    <button data-ng-click="todoList.startSearch()">Start scan</button><br>
+    <button data-ng-click="todoList.startSearch()">Start scan</button>
+    <br>
     Results:
     <table>
-        <tr data-ng-repeat="room in todoList.newRooms">
+        <tr data-ng-repeat="room in todoList.newRooms"
+            data-ng-class="{danger: room.status == 0, warning: room.status == 1, ok: room.status == 2, old: room.status == 3}">
             <td>{{room.id}}</td>
             <td>
                 <img data-ng-if="room.status == 0" src="ajax-loader.gif">
-                <span data-ng-if="room.status != 0"> {{room.players}} ({{room.activePlayers}})</span>
+                <span data-ng-if="room.status != 0"><strong> {{room.players}} ({{room.activePlayers}})</strong></span>
             </td>
         </tr>
     </table>
