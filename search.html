@@ -1,7 +1,10 @@
-<html data-ng-app="applicationKPP">
+<html ng-app="applicationKPP">
 <head>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
     <script type='text/javascript' src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+    <script>
+        var applicationKPP = angular.module('applicationKPP', []);
+    </script>
     <script src="controller_v_first.js"></script>
     <script src="controller_v_second.js"></script>
     <style>
@@ -23,7 +26,7 @@
     </style>
 </head>
 <body>
-<div data-ng-controller="controllerVFirst as vm">
+<div ng-controller="controllerVFirst as vm">
     <h2>КПП — {{vm.version}}</h2>
     <button data-ng-click="vm.start()">start scan</button>
     <button data-ng-click="vm.stop()">stop scan</button>

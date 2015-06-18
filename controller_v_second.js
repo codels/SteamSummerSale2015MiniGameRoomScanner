@@ -1,5 +1,4 @@
-angular.module('applicationKPP', [])
-    .controller('controllerVSecond', function ($http, $timeout, $interval) {
+applicationKPP.controller('controllerVSecond', function ($http, $timeout, $interval) {
         var vm = this;
 
         vm.version = "0.2 Bizarre";
