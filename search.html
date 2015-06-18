@@ -1,0 +1,23 @@
+<html ng-app="todoApp">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+    <script type='text/javascript' src="http://documentcloud.github.com/underscore/underscore-min.js"></script>
+    <script src="todo.js"></script>
+</head>
+<body>
+<div ng-controller="TodoListController as todoList">
+    <button ng-click="todoList.start()">start scan</button> <button ng-click="todoList.stop()">stop scan</button><br>
+    Current scan room id: <input type="number" ng-model="todoList.currentRoomId"><br>
+    Min scan room id: <input type="number" ng-model="todoList.minRoomId"> (Block <input type="checkbox" ng-model="todoList.minIsBlocked">)<br>
+    Max scan room id: <input type="number" ng-model="todoList.maxRoomId"> (Block <input type="checkbox" ng-model="todoList.maxIsBlocked">)<br>
+    Only not started room: <input type="checkbox" ng-model="todoList.search_only_not_started"><br>
+    Rooms found:<br>
+    <table>
+        <tr ng-repeat="roomId in todoList.rooms">
+            <td>{{ roomId }}</td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>
