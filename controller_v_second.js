@@ -34,7 +34,7 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
         vm.stalk = function () {
             $http.post('./account_in_room.php', {
                 room_id: vm.stalkRoom,
-                account_id: vm.accountsSearch
+                account_id: 133090071
             }).then(function (response) {
                 if (!response.data.exists) {
                     var alert = new Audio('alert.mp3');
