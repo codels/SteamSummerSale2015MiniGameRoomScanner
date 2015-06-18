@@ -9,6 +9,7 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
         vm.accountsSearch = [10098050, 133090071];
         vm.is_start = false;
         vm.lastRoomId = 45585;
+        vm.foundedRooms = [];
 
         vm.start = function () {
             vm.is_start = true;
@@ -47,6 +48,7 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
                             vm.newRooms[i].refresh = 1;
                         }
                     }
+                    vm.scanAccountInRoom(vm.currentRoomId);
                     if (vm.autoRefresh) {
                         vm.startRefreshing(vm.currentRoomId);
                     }
@@ -73,6 +75,7 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
                             $timeout(function () {
                                 if (vm.autoRefresh && vm.is_start) {
                                     vm.startRefreshing(roomId);
+                                    vm.scanAccountInRoom(roomId);
                                 }
                             }, 5000);
                         }
@@ -86,13 +89,13 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
                 room_id: roomId,
                 account_id: vm.accountsSearch
             }).then(function (response) {
-                if (_.indexOf(response.data.room_id, vm.rooms) == -1) {
+                if (_.indexOf(response.data.room_id, vm.foundedRooms) == -1) {
                     if (response.data.exists) {
-                        vm.rooms.push(response.data.room_id);
+                        vm.foundedRooms.push(response.data.room_id);
                     }
                 } else {
                     if (!response.data.exists) {
-                        vm.rooms = _.without(vm.rooms, response.data.room_id);
+                        vm.foundedRooms = _.without(vm.foundedRooms, response.data.room_id);
                     }
                 }
             })

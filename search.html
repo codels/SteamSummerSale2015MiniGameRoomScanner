@@ -33,9 +33,9 @@
     <br>
     Current scan room id: <input type="number" data-ng-model="vm.currentRoomId"><br>
     Min scan room id: <input type="number" ng-model="vm.minRoomId"> (Block <input type="checkbox"
-                                                                                        ng-model="vm.minIsBlocked">)<br>
+                                                                                  ng-model="vm.minIsBlocked">)<br>
     Max scan room id: <input type="number" ng-model="vm.maxRoomId"> (Block <input type="checkbox"
-                                                                                        ng-model="vm.maxIsBlocked">)<br>
+                                                                                  ng-model="vm.maxIsBlocked">)<br>
     Only not started room: <input type="checkbox" data-ng-model="vm.search_only_not_started"><br>
     <!--    Threads: <input type="number" data-ng-model="todoList.threads"><br>
         Rooms in thread: <input type="number" data-ng-model="todoList.range"><br>-->
@@ -49,6 +49,7 @@
 
 <div data-ng-controller="controllerVSecond as vm">
     <h2>КПП — {{vm.version}}</h2>
+
     <h3>Search new Room</h3>
     <button data-ng-click="vm.startSearch()">Start scan</button>
     <button data-ng-click="vm.stop()">Stop scan</button>
@@ -59,17 +60,31 @@
     Autoupdate while players < <input type="number" data-ng-model="vm.maxPlayers">
 
     <br>
+    <hr>
     Results:
-    <table>
-        <tr data-ng-repeat="room in vm.newRooms"
-            data-ng-class="{danger: room.status == 0, warning: room.status == 1, ok: room.status == 2, old: room.status == 3}">
-            <td>{{room.id}}</td>
-            <td>
-                <img data-ng-if="room.status == 0" src="ajax-loader.gif">
-                <span data-ng-if="room.status != 0"><strong> {{room.players}} ({{room.activePlayers}})</strong></span>
-            </td>
-        </tr>
-    </table>
+    <div style="width: 100%">
+        <div style="width: 50%; float: left">
+            <table>
+                <tr data-ng-repeat="room in vm.newRooms"
+                    data-ng-class="{danger: room.status == 0, warning: room.status == 1, ok: room.status == 2, old: room.status == 3}">
+                    <td>{{room.id}}</td>
+                    <td>
+                        <img data-ng-if="room.status == 0" src="ajax-loader.gif">
+                    <span data-ng-if="room.status != 0"><strong> {{room.players}}
+                        ({{room.activePlayers}})</strong></span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div style="width: 50%; float: right">
+            ROOMS TO JOIN!
+            <table>
+                <tr data-ng-repeat="roomId in vm.foundedRooms">
+                    <td>{{roomId}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
 </div>
 
 </body>
