@@ -1,23 +1,14 @@
 applicationKPP.controller('controllerVSecond', function ($http, $timeout, $interval) {
         var vm = this;
 
-        vm.version = "0.2 Bizarre";
-        vm.minRoomId = 44347;
-        vm.maxRoomId = 45585;
+        vm.version = "0.2 —  Bizarre";
         vm.currentRoomId = 0;
         vm.newRooms = [];
-        vm.rooms = [];
         vm.autoRefresh = true;
         vm.maxPlayers = 1400;
         vm.accountsSearch = [10098050, 133090071];
-        vm.currentMaxRoomId = 0;
         vm.is_start = false;
-        vm.search_only_not_started = false;
-        vm.minIsBlocked = false;
-        vm.maxIsBlocked = false;
         vm.lastRoomId = 45585;
-        vm.threads = 5;
-        vm.range = 100;
 
         vm.start = function () {
             vm.is_start = true;
@@ -26,6 +17,7 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
         };
 
         vm.startSearch = function () {
+            vm.newRooms = [];
             vm.is_start = true;
             vm.currentRoomId = vm.lastRoomId;
             vm.newRooms.push({id: vm.currentRoomId, status: 0, players: 0, activePlayers: 0, refresh: 0});
@@ -79,7 +71,9 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
                         }
                         else {
                             $timeout(function () {
-                                vm.startRefreshing(roomId);
+                                if (vm.autoRefresh && vm.is_start) {
+                                    vm.startRefreshing(roomId);
+                                }
                             }, 5000);
                         }
                     }
