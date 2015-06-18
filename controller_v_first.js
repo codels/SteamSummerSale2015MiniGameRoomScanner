@@ -8,7 +8,7 @@ applicationKPP.controller('controllerVFirst', function ($http, $timeout, $interv
         vm.is_start = false;
 
         vm.roomsScanning = [];
-        vm.startRoomId = 45625;
+        vm.startRoomId = 45630;
         vm.roomLastId = 0;
         vm.ignoreStartedRoom = false;
         vm.ignoreCountPlayers = 900;

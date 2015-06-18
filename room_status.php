@@ -27,6 +27,8 @@ $info = $statementSearch->fetch(PDO::FETCH_ASSOC);
 if (!empty($info['status']) && $info['status'] == 3) {
     $level = $info['level'];
     $status = $info['status'];
+    $players = -1;
+    $activePlayers = -1;
 } else {
     $statementUpdate = $db->prepare('REPLACE INTO `rooms` (`id`, `level`, `status`, `players`) VALUES (?, ?, ?, ?)');
 
