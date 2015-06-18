@@ -30,8 +30,10 @@ if (!empty($info['status']) && $info['status'] == 3) {
 
     $level = -1;
     $status = -1;
+    $players = -1;
+    $activePlayers = -1;
 
-    $gameInfo = json_decode(file_get_contents('http://steamapi-a.akamaihd.net/ITowerAttackMiniGameService/GetGameData/v0001/?gameid='.$roomId.'&include_stats=0'));
+    $gameInfo = json_decode(file_get_contents('http://steamapi-a.akamaihd.net/ITowerAttackMiniGameService/GetGameData/v0001/?gameid='.$roomId.'&include_stats=1'));
 
     if (property_exists($gameInfo, 'response')) {
         if (property_exists($gameInfo->response, 'game_data')) {
@@ -42,6 +44,14 @@ if (!empty($info['status']) && $info['status'] == 3) {
                 $status = $gameInfo->response->game_data->status;
             }
         }
+        if (property_exists($gameInfo->response, 'stats')) {
+            if (property_exists($gameInfo->response->stats, 'num_players')) {
+                $players = $gameInfo->response->stats->num_players;
+            }
+            if (property_exists($gameInfo->response->stats, 'num_active_players')) {
+                $activePlayers = $gameInfo->response->stats->num_active_players;
+            }
+        }
     }
 
     $statementUpdate->execute(array($roomId, $level, $status));
@@ -50,5 +60,7 @@ if (!empty($info['status']) && $info['status'] == 3) {
 echo json_encode(array(
     'room_id' => $roomId,
     'level' => $level,
-    'status' => $status
+    'status' => $status,
+    'players' => $players,
+    'activePlayers' => $activePlayers
 ), JSON_FORCE_OBJECT);
