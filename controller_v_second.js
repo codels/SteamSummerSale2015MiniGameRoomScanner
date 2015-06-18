@@ -6,9 +6,9 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
         vm.newRooms = [];
         vm.autoRefresh = true;
         vm.maxPlayers = 1400;
-        vm.accountsSearch = [10098050, 133090071];
+        vm.accountsSearch = [10098050, 133090071, 68758347];
         vm.is_start = false;
-        vm.lastRoomId = 45585;
+        vm.lastRoomId = 45620;
         vm.foundedRooms = [];
 
         vm.start = function () {
@@ -21,7 +21,7 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
             vm.newRooms = [];
             vm.is_start = true;
             vm.currentRoomId = vm.lastRoomId;
-            vm.newRooms.push({id: vm.currentRoomId, status: 0, players: 0, activePlayers: 0, refresh: 0});
+            vm.newRooms.push({id: vm.currentRoomId, status: 0, players: 0, refresh: 0});
             vm.searchNewRoom();
         };
 
@@ -43,12 +43,10 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
                     for (i = 0; i < vm.newRooms.length; i++) {
                         if (vm.newRooms[i].id == vm.currentRoomId) {
                             vm.newRooms[i].players = response.data.players;
-                            vm.newRooms[i].activePlayers = response.data.activePlayers;
                             vm.newRooms[i].status = response.data.status;
                             vm.newRooms[i].refresh = 1;
                         }
                     }
-                    vm.scanAccountInRoom(vm.currentRoomId);
                     if (vm.autoRefresh) {
                         vm.startRefreshing(vm.currentRoomId);
                     }
@@ -62,29 +60,6 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
 
         vm.startRefreshing = function (roomId) {
             console.log('refreshing' + roomId);
-            $http.post('./room_status.php', {room_id: roomId}).then(function (response) {
-                for (j = 0; j < vm.newRooms.length; j++) { //дерьмокод
-                    if (vm.newRooms[j].id == roomId) {
-                        vm.newRooms[j].players = response.data.players;
-                        vm.newRooms[j].activePlayers = response.data.activePlayers;
-                        vm.newRooms[j].status = response.data.status;
-                        if (response.data.players > vm.maxPlayers) {
-                            vm.newRooms[j].refresh = 0;
-                        }
-                        else {
-                            $timeout(function () {
-                                if (vm.autoRefresh && vm.is_start) {
-                                    vm.startRefreshing(roomId);
-                                    vm.scanAccountInRoom(roomId);
-                                }
-                            }, 5000);
-                        }
-                    }
-                }
-            })
-        };
-
-        vm.scanAccountInRoom = function (roomId) {
             $http.post('./account_in_room.php', {
                 room_id: roomId,
                 account_id: vm.accountsSearch
@@ -96,6 +71,21 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
                 } else {
                     if (!response.data.exists) {
                         vm.foundedRooms = _.without(vm.foundedRooms, response.data.room_id);
+                    }
+                }
+                for (j = 0; j < vm.newRooms.length; j++) { //дерьмокод
+                    if (vm.newRooms[j].id == roomId) {
+                        vm.newRooms[j].players = response.data.players;
+                        if (response.data.players > vm.maxPlayers) {
+                            vm.newRooms[j].refresh = 0;
+                        }
+                        else {
+                            $timeout(function () {
+                                if (vm.autoRefresh && vm.is_start) {
+                                    vm.startRefreshing(roomId);
+                                }
+                            }, 10000);
+                        }
                     }
                 }
             })
