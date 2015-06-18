@@ -16,7 +16,9 @@ if (empty($_REQUEST['room_id'])) {
 
 $roomId = intval($_REQUEST['room_id']);
 
-$db = new PDO('mysql:host=127.0.0.1;dbname=stats', 'root', 'hi');
+require_once 'config.php';
+
+$db = new PDO('mysql:host='.$dbHost.';dbname='.$dbName, $dbUser, $dbPass);
 $db->query('SET NAMES utf8');
 
 $statementSearch = $db->prepare('SELECT `status`, `level` FROM `rooms` WHERE `id` = ?');
@@ -26,7 +28,7 @@ if (!empty($info['status']) && $info['status'] == 3) {
     $level = $info['level'];
     $status = $info['status'];
 } else {
-    $statementUpdate = $db->prepare('REPLACE INTO `rooms` (`id`, `level`, `status`) VALUES (?, ?, ?)');
+    $statementUpdate = $db->prepare('REPLACE INTO `rooms` (`id`, `level`, `status`, `players`) VALUES (?, ?, ?, ?)');
 
     $level = -1;
     $status = -1;
@@ -54,7 +56,7 @@ if (!empty($info['status']) && $info['status'] == 3) {
         }
     }
 
-    $statementUpdate->execute(array($roomId, $level, $status));
+    $statementUpdate->execute(array($roomId, $level, $status, $players));
 }
 
 echo json_encode(array(

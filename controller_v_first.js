@@ -2,22 +2,16 @@ applicationKPP.controller('controllerVFirst', function ($http, $timeout, $interv
         var vm = this;
 
         vm.version = "0.1";
-        vm.minRoomId = 44347;
-        vm.maxRoomId = 45585;
+        vm.minRoomId = 45190;
+        vm.maxRoomId = 45210;
         vm.currentRoomId = 0;
-        vm.newRooms = [];
         vm.rooms = [];
-        vm.autoRefresh = true;
-        vm.maxPlayers = 1400;
         vm.accountsSearch = [10098050, 133090071];
         vm.currentMaxRoomId = 0;
         vm.is_start = false;
         vm.search_only_not_started = false;
-        vm.minIsBlocked = false;
-        vm.maxIsBlocked = false;
-        vm.lastRoomId = 45585;
-        vm.threads = 5;
-        vm.range = 100;
+        vm.minIsBlocked = true;
+        vm.maxIsBlocked = true;
 
         vm.start = function () {
             vm.is_start = true;
@@ -27,64 +21,12 @@ applicationKPP.controller('controllerVFirst', function ($http, $timeout, $interv
 
         vm.startSearch = function () {
             vm.is_start = true;
-            vm.currentRoomId = vm.lastRoomId;
-            vm.newRooms.push({id: vm.currentRoomId, status: 0, players: 0, activePlayers: 0, refresh: 0});
+            vm.currentRoomId = vm.minRoomId;
             vm.searchNewRoom();
         };
 
         vm.stop = function () {
             vm.is_start = false;
-        };
-
-        vm.searchNewRoom = function () {
-            if (!vm.is_start) {
-                return;
-            }
-            $http.post('./room_status.php', {room_id: vm.currentRoomId}).then(function (response) {
-                if (!response || response.data.status == -1) {
-                    $timeout(function () {
-                        vm.searchNewRoom();
-                    }, 3000);
-                }
-                else {
-                    for (i = 0; i < vm.newRooms.length; i++) {
-                        if (vm.newRooms[i].id == vm.currentRoomId) {
-                            vm.newRooms[i].players = response.data.players;
-                            vm.newRooms[i].activePlayers = response.data.activePlayers;
-                            vm.newRooms[i].status = response.data.status;
-                            vm.newRooms[i].refresh = 1;
-                        }
-                    }
-                    if (vm.autoRefresh) {
-                        vm.startRefreshing(vm.currentRoomId);
-                    }
-                    vm.lastRoomId = vm.currentRoomId;
-                    vm.currentRoomId++;
-                    vm.newRooms.push({id: vm.currentRoomId, status: 0});
-                    vm.searchNewRoom();
-                }
-            })
-        };
-
-        vm.startRefreshing = function (roomId) {
-            console.log('refreshing' + roomId);
-            $http.post('./room_status.php', {room_id: roomId}).then(function (response) {
-                for (j = 0; j < vm.newRooms.length; j++) { //дерьмокод
-                    if (vm.newRooms[j].id == roomId) {
-                        vm.newRooms[j].players = response.data.players;
-                        vm.newRooms[j].activePlayers = response.data.activePlayers;
-                        vm.newRooms[j].status = response.data.status;
-                        if (response.data.players > vm.maxPlayers) {
-                            vm.newRooms[j].refresh = 0;
-                        }
-                        else {
-                            $timeout(function () {
-                                vm.startRefreshing(roomId);
-                            }, 5000);
-                        }
-                    }
-                }
-            })
         };
 
         vm.scanRoomsStatus = function () {

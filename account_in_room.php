@@ -24,6 +24,15 @@ $exists = false;
 if (property_exists($gameInfo, 'response')) {
     if (property_exists($gameInfo->response, 'names')) {
         $players = count($gameInfo->response->names);
+
+        require_once 'config.php';
+
+        $db = new PDO('mysql:host='.$dbHost.';dbname='.$dbName, $dbUser, $dbPass);
+        $db->query('SET NAMES utf8');
+
+        $statementUp = $db->prepare('UPDATE `rooms` SET `players` = ? WHERE `id` = ?');
+        $statementUp->execute(array($players, $roomId));
+
         foreach ($gameInfo->response->names as $player) {
             if (is_array($accountId)) {
                 if (in_array($player->accountid, $accountId)) {
