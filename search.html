@@ -31,18 +31,24 @@
     <button data-ng-click="vm.start()">start scan</button>
     <button data-ng-click="vm.stop()">stop scan</button>
     <br>
-    Current scan room id: <input type="number" data-ng-model="vm.currentRoomId"><br>
-    Min scan room id: <input type="number" ng-model="vm.minRoomId"> (Block <input type="checkbox"
-                                                                                  ng-model="vm.minIsBlocked">)<br>
-    Max scan room id: <input type="number" ng-model="vm.maxRoomId"> (Block <input type="checkbox"
-                                                                                  ng-model="vm.maxIsBlocked">)<br>
-    Only not started room: <input type="checkbox" data-ng-model="vm.search_only_not_started"><br>
+    Min scan room id: <input type="number" ng-model="vm.startRoomId"><br>
+    Last scan room id: <input type="number" ng-model="vm.roomLastId"><br>
+    Ignore player count: <input type="number" ng-model="vm.ignoreCountPlayers"><br>
+    Only not started room: <input type="checkbox" data-ng-model="vm.ignoreStartedRoom"><br>
     <!--    Threads: <input type="number" data-ng-model="todoList.threads"><br>
         Rooms in thread: <input type="number" data-ng-model="todoList.range"><br>-->
-    Rooms found:<br>
+
+    FOUND!!!!:<br>
     <table>
-        <tr ng-repeat="roomId in vm.rooms">
-            <td>{{ roomId }}</td>
+        <tr ng-repeat="room in vm.roomsScanning"  data-ng-if="room.founded">
+            <td>{{ room.id }} ({{ room.players }})</td>
+        </tr>
+    </table>
+
+    Scaning...:<br>
+    <table>
+        <tr ng-repeat="room in vm.roomsScanning"  data-ng-if="!room.disabled">
+            <td>{{ room.id }} ({{ room.players }})</td>
         </tr>
     </table>
 </div>

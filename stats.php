@@ -13,10 +13,6 @@ foreach ($gameInfo->response->names as $info) {
     $statement->execute(array($info->accountid, $roomId, $info->name));
 }
 
-
-
-
-
 foreach ($accIds as $accId) {
     $statement->execute(array($accId, $roomId));
 }
