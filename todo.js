@@ -55,7 +55,9 @@ angular.module('todoApp', [])
                             vm.newRooms[i].refresh = 1;
                         }
                     }
-                    vm.startRefreshing(vm.currentRoomId);
+                    if (vm.autoRefresh) {
+                        vm.startRefreshing(vm.currentRoomId);
+                    }
                     vm.currentRoomId++;
                     vm.newRooms.push({id: vm.currentRoomId, status: 0});
                     vm.searchNewRoom();
