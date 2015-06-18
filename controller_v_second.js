@@ -81,53 +81,6 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
             })
         };
 
-        vm.scanRoomsStatus = function () {
-            if (!vm.is_start) {
-                return;
-            }
-            $http.post('./room_status.php', {room_id: vm.currentRoomId}).then(function (response) {
-                if (!vm.minIsBlocked) {
-                    if (response.data.room_id >= vm.minRoomId) {
-                        if (response.data.status == 3) { //end
-                            vm.minRoomId = response.data.room_id + 1;
-                        }
-                        if (vm.search_only_not_started) {
-                            if (response.data.status == 2) { // process
-                                vm.minRoomId = response.data.room_id + 1;
-                            }
-                        }
-                    }
-                }
-
-                if (response.data.status >= 1 && response.data.status <= 2) {
-                    vm.scanAccountInRoom(parseInt(response.data.room_id, 10));
-                }
-
-                if (response.data.status == -1) {
-                    if (!vm.maxIsBlocked && response.data.room_id > vm.maxRoomId) {
-                        vm.maxRoomId = parseInt(response.data.room_id, 10);
-                    }
-                } else {
-                    vm.currentRoomId = vm.currentRoomId + 1;
-                    if (!vm.maxIsBlocked && response.data.room_id == vm.maxRoomId) {
-                        vm.maxRoomId = response.data.room_id + 1;
-                    }
-                }
-
-                if (response.data.room_id >= vm.maxRoomId) {
-                    vm.currentRoomId = parseInt(vm.minRoomId, 10);
-                }
-
-                if (!vm.maxIsBlocked) {
-                    if (vm.minRoomId > vm.maxRoomId) {
-                        vm.maxRoomId = parseInt(vm.minRoomId);
-                    }
-                }
-
-                vm.scanRoomsStatus();
-            })
-        };
-
         vm.scanAccountInRoom = function (roomId) {
             $http.post('./account_in_room.php', {
                 room_id: roomId,
