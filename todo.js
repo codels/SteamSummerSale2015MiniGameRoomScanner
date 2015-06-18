@@ -70,14 +70,14 @@ angular.module('todoApp', [])
                 for (i = 0; i < vm.newRooms.length; i++) {
                     if (vm.newRooms[i].refresh == 1) {
                         $http.post('./room_status.php', {room_id: vm.newRooms[i].id}).then(function (response) {
-                            for (i = 0; i < vm.newRooms.length; i++) { //дерьмокод
-                                if (vm.newRooms[i].id == vm.currentRoomId) {
-                                    vm.newRooms[i].players = response.data.players;
+                            for (j = 0; j < vm.newRooms.length; j++) { //дерьмокод
+                                if (vm.newRooms[j].id == response.data.id) {
+                                    vm.newRooms[j].players = response.data.players;
                                     if (response.data.players > vm.maxPlayers) {
-                                        vm.newRooms[i].refresh = 0;
+                                        vm.newRooms[j].refresh = 0;
                                     }
-                                    vm.newRooms[i].activePlayers = response.data.activePlayers;
-                                    vm.newRooms[i].status = response.data.status;
+                                    vm.newRooms[j].activePlayers = response.data.activePlayers;
+                                    vm.newRooms[j].status = response.data.status;
                                 }
                             }
                         })
