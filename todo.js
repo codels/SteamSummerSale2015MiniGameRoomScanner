@@ -7,6 +7,7 @@ angular.module('todoApp', [])
         vm.currentRoomId = 0;
         vm.newRooms = [];
         vm.rooms = [];
+        vm.autoRefresh = true;
         vm.maxPlayers = 1400;
         vm.accountsSearch = [10098050, 133090071];
         vm.currentMaxRoomId = 0;
@@ -21,13 +22,14 @@ angular.module('todoApp', [])
         vm.start = function () {
             vm.is_start = true;
             vm.currentRoomId = vm.minRoomId;
-            vm.newRooms.push({id: vm.currentRoomId, status: 0, players: 0, activePlayers: 0});
             vm.scanRoomsStatus();
         };
 
         vm.startSearch = function () {
             vm.is_start = true;
             vm.currentRoomId = vm.lastRoomId;
+            vm.newRooms.push({id: vm.currentRoomId, status: 0, players: 0, activePlayers: 0, refresh: 0});
+            vm.startRefreshing();
             vm.searchNewRoom();
         };
 
@@ -51,9 +53,10 @@ angular.module('todoApp', [])
                             vm.newRooms[i].players = response.data.players;
                             vm.newRooms[i].activePlayers = response.data.activePlayers;
                             vm.newRooms[i].status = response.data.status;
+                            vm.newRooms[i].refresh = 1;
                         }
                     }
-                    vm.startRefreshing(vm.currentRoomId);
+                    // vm.startRefreshing(vm.currentRoomId);
                     vm.currentRoomId++;
                     vm.newRooms.push({id: vm.currentRoomId, status: 0});
                     vm.searchNewRoom();
@@ -61,19 +64,26 @@ angular.module('todoApp', [])
             })
         };
 
-        vm.startRefreshing = function (roomId) {
-            players = 0;
+        vm.startRefreshing = function () {
+            console.log('refresh');
             $interval(function () {
-                $http.post('./room_status.php', {room_id: roomId}).then(function (response) {
-                    for (i = 0; i < vm.newRooms.length; i++) {
-                        if (vm.newRooms[i].id == vm.currentRoomId) {
-                            vm.newRooms[i].players = response.data.players;
-                            vm.newRooms[i].activePlayers = response.data.activePlayers;
-                            vm.newRooms[i].status = response.data.status;
-                        }
+                for (i = 0; i < vm.newRooms.length; i++) {
+                    if (vm.newRooms[i].refresh == 1) {
+                        $http.post('./room_status.php', {room_id: vm.newRooms[i].id}).then(function (response) {
+                            for (i = 0; i < vm.newRooms.length; i++) { //дерьмокод
+                                if (vm.newRooms[i].id == vm.currentRoomId) {
+                                    vm.newRooms[i].players = response.data.players;
+                                    if (response.data.players > vm.maxPlayers) {
+                                        vm.newRooms[i].refresh = 0;
+                                    }
+                                    vm.newRooms[i].activePlayers = response.data.activePlayers;
+                                    vm.newRooms[i].status = response.data.status;
+                                }
+                            }
+                        })
                     }
-                }, 3000);
-            })
+                }
+            }, 3000);
         };
 
         vm.scanRoomsStatus = function () {
@@ -140,5 +150,4 @@ angular.module('todoApp', [])
             })
         };
     }
-)
-;
+);

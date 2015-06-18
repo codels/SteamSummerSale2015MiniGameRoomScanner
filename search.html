@@ -42,8 +42,10 @@
     </table>
     <hr>
     <h3>Search new Room</h3>
-    Last room ID: <input type="number" data-ng-model="todoList.lastRoomId">
-    <button data-ng-click="todoList.startSearch()">Start scan</button>
+    <button data-ng-click="todoList.startSearch()">Start scan</button><br>
+    Last room ID: <input type="number" data-ng-model="todoList.lastRoomId"><br>
+    Autoupdate while players < <input type="number" data-ng-model="todoList.maxPlayers">
+
     <br>
     Results:
     <table>
