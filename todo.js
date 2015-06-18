@@ -1,5 +1,5 @@
 angular.module('todoApp', [])
-    .controller('TodoListController', function ($http, $timeout) {
+    .controller('TodoListController', function ($http, $timeout, $interval) {
         var vm = this;
 
         vm.minRoomId = 44347;
@@ -7,6 +7,7 @@ angular.module('todoApp', [])
         vm.currentRoomId = 0;
         vm.newRooms = [];
         vm.rooms = [];
+        vm.maxPlayers = 1400;
         vm.accountsSearch = [10098050, 133090071];
         vm.currentMaxRoomId = 0;
         vm.is_start = false;
@@ -52,10 +53,26 @@ angular.module('todoApp', [])
                             vm.newRooms[i].status = response.data.status;
                         }
                     }
+                    vm.startRefreshing(vm.currentRoomId);
                     vm.currentRoomId++;
                     vm.newRooms.push({id: vm.currentRoomId, status: 0});
                     vm.searchNewRoom();
                 }
+            })
+        };
+
+        vm.startRefreshing = function (roomId) {
+            players = 0;
+            $interval(function () {
+                $http.post('./room_status.php', {room_id: roomId}).then(function (response) {
+                    for (i = 0; i < vm.newRooms.length; i++) {
+                        if (vm.newRooms[i].id == vm.currentRoomId) {
+                            vm.newRooms[i].players = response.data.players;
+                            vm.newRooms[i].activePlayers = response.data.activePlayers;
+                            vm.newRooms[i].status = response.data.status;
+                        }
+                    }
+                }, 3000);
             })
         };
 
@@ -122,4 +139,6 @@ angular.module('todoApp', [])
                 }
             })
         };
-    });
+    }
+)
+;
