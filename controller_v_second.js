@@ -9,6 +9,7 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
         vm.accountsSearch = [10098050, 133090071, 68758347];
         vm.is_start = false;
         vm.lastRoomId = 45620;
+        vm.refreshTimeout = 10000;
         vm.foundedRooms = [];
 
         vm.start = function () {
@@ -84,7 +85,7 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
                                 if (vm.autoRefresh && vm.is_start) {
                                     vm.startRefreshing(roomId);
                                 }
-                            }, 10000);
+                            }, vm.refreshTimeout);
                         }
                     }
                 }

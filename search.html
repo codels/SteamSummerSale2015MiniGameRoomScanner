@@ -54,10 +54,10 @@
     <button data-ng-click="vm.startSearch()">Start scan</button>
     <button data-ng-click="vm.stop()">Stop scan</button>
     <br>
-    Last room ID: <input type="number" data-ng-model="vm.lastRoomId"> Autorefresh: <input
-        type="checkbox" data-ng-model="vm.autoRefresh">
-    <br>
-    Autoupdate while players < <input type="number" data-ng-model="vm.maxPlayers">
+    Last room ID: <input type="number" data-ng-model="vm.lastRoomId"><br>
+    Autoupdate while players < <input type="number" data-ng-model="vm.maxPlayers"><br>
+    Autorefresh: <input type="checkbox" data-ng-model="vm.autoRefresh"> Refresh timeout (ms): <input type="number"
+                                                                                                data-ng-model="vm.refreshTimeout">
 
     <br>
     <hr>
@@ -70,7 +70,7 @@
                     <td>{{room.id}}</td>
                     <td>
                         <img data-ng-if="room.status == 0" src="ajax-loader.gif">
-                    <span data-ng-if="room.status != 0"><strong> {{room.players}}</strong></span>
+                        <span data-ng-if="room.status != 0"><strong> {{room.players}}</strong></span>
                     </td>
                 </tr>
             </table>
