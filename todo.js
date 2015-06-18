@@ -29,7 +29,6 @@ angular.module('todoApp', [])
             vm.is_start = true;
             vm.currentRoomId = vm.lastRoomId;
             vm.newRooms.push({id: vm.currentRoomId, status: 0, players: 0, activePlayers: 0, refresh: 0});
-            vm.startRefreshing();
             vm.searchNewRoom();
         };
 
@@ -56,7 +55,7 @@ angular.module('todoApp', [])
                             vm.newRooms[i].refresh = 1;
                         }
                     }
-                    // vm.startRefreshing(vm.currentRoomId);
+                    vm.startRefreshing(vm.currentRoomId);
                     vm.currentRoomId++;
                     vm.newRooms.push({id: vm.currentRoomId, status: 0});
                     vm.searchNewRoom();
@@ -64,26 +63,25 @@ angular.module('todoApp', [])
             })
         };
 
-        vm.startRefreshing = function () {
-            console.log('refresh');
-            $interval(function () {
-                for (i = 0; i < vm.newRooms.length; i++) {
-                    if (vm.newRooms[i].refresh == 1) {
-                        $http.post('./room_status.php', {room_id: vm.newRooms[i].id}).then(function (response) {
-                            for (j = 0; j < vm.newRooms.length; j++) { //дерьмокод
-                                if (vm.newRooms[j].id == response.data.id) {
-                                    vm.newRooms[j].players = response.data.players;
-                                    if (response.data.players > vm.maxPlayers) {
-                                        vm.newRooms[j].refresh = 0;
-                                    }
-                                    vm.newRooms[j].activePlayers = response.data.activePlayers;
-                                    vm.newRooms[j].status = response.data.status;
-                                }
-                            }
-                        })
+        vm.startRefreshing = function (roomId) {
+            console.log('refreshing' + roomId);
+            $http.post('./room_status.php', {room_id: roomId}).then(function (response) {
+                for (j = 0; j < vm.newRooms.length; j++) { //дерьмокод
+                    if (vm.newRooms[j].id == roomId) {
+                        vm.newRooms[j].players = response.data.players;
+                        vm.newRooms[j].activePlayers = response.data.activePlayers;
+                        vm.newRooms[j].status = response.data.status;
+                        if (response.data.players > vm.maxPlayers) {
+                            vm.newRooms[j].refresh = 0;
+                        }
+                        else {
+                            $timeout(function () {
+                                vm.startRefreshing(roomId);
+                            }, 5000);
+                        }
                     }
                 }
-            }, 3000);
+            })
         };
 
         vm.scanRoomsStatus = function () {
