@@ -1,5 +1,6 @@
 <html>
 <head>
+    <meta charset='utf-8'>
     <link rel="stylesheet" href="http://tablesorter.com/themes/blue/style.css" type="text/css"
           media="print, projection, screen"/>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -106,7 +107,7 @@ foreach ($array as $objectRoom) {
     echo "<tr class='" . ('') . "' id='{$objectRoom->id}'>";
 
     echo "
-<td>".(++$i)."</td>
+<td>" . (++$i) . "</td>
 <td>{$objectRoom->position}</td>
 <td>{$objectRoom->id}</td>
 <td>{$objectRoom->name}</td>
@@ -137,9 +138,9 @@ echo '</tbody></table>';
     // add custom numbering widget
     $.tablesorter.addWidget({
         id: "numbering",
-        format: function(table) {
+        format: function (table) {
             var c = table.config;
-            $("tr:visible", table.tBodies[0]).each(function(i) {
+            $("tr:visible", table.tBodies[0]).each(function (i) {
                 $(this).find('td').eq(number_column).text(i + 1);
             });
         }
@@ -148,7 +149,7 @@ echo '</tbody></table>';
     $(function () {
         $("#tablesorter-demo").tablesorter({
             widgets: ['zebra', 'numbering'],
-            textExtraction: function(node) {
+            textExtraction: function (node) {
                 var cell_value = $(node).text();
                 var sort_value = $(node).data('value');
                 return (sort_value != undefined) ? sort_value : cell_value;
@@ -159,7 +160,7 @@ echo '</tbody></table>';
     function updateRooms() {
         $('.me-room').removeClass('me-room');
         var meRooms = getMeRooms();
-        for(var i = 0; i < meRooms.length; i++) {
+        for (var i = 0; i < meRooms.length; i++) {
             $('#' + meRooms[i]).addClass('me-room');
         }
     }
