@@ -29,7 +29,7 @@ applicationKPP.controller('controllerVFirst', function ($http, $timeout, $interv
                 return;
             }
 
-            $http.post('./room_status.php', {room_id: vm.roomLastId, timeout: 1000}).then(function (response) {
+            $http.post('./room_info_json.php', {room_id: vm.roomLastId}).then(function (response) {
                 var timeoutTime = 0;
                 if (_.has(response.data, 'room_id') && _.has(response.data, 'status')) {
                     if (response.data.status == -1) {
@@ -45,7 +45,8 @@ applicationKPP.controller('controllerVFirst', function ($http, $timeout, $interv
                                 id: response.data.room_id,
                                 players: response.data.players,
                                 founded: false,
-                                disabled: false
+                                disabled: false,
+                                accounts_found: []
                             };
                             vm.roomsScanning.push(room);
                             vm.scanRoom(room);
@@ -60,25 +61,30 @@ applicationKPP.controller('controllerVFirst', function ($http, $timeout, $interv
             if (!vm.is_start) {
                 return;
             }
-            $http.post('./account_in_room.php', {
+            $http.post('./search_accounts_in_room.php', {
                 room_id: room.id,
-                account_id: vm.accountsSearch,
-                timeout: 1000
+                account_id: vm.accountsSearch
             }).then(function (response) {
-                room.founded = response.data.exists || false;
-                room.players = response.data.players || -1;
-                if (room.players <= vm.ignoreCountPlayers) {
-                    vm.scanRoom(room);
+                if (_.has(response, 'data') && _.has(response.data, 'room_id')) {
+                    if (_.has(response.data, 'exists')) {
+                        room.founded = response.data.exists;
+                    }
+
+                    if (_.has(response.data, 'players')) {
+                        room.players = response.data.players;
+                    }
+
+                    if (room.players <= vm.ignoreCountPlayers || room.founded) {
+                        $timeout(function() { vm.scanRoom(room); }, 1000);
+                    } else {
+                        room.disabled = true;
+                    }
                 } else {
-                    room.disabled = true;
+                    // retry instant scan
+                    vm.scanRoom(room);
                 }
             })
         };
 
-        vm.startSearch = function () {
-            vm.is_start = true;
-            vm.currentRoomId = vm.minRoomId;
-            vm.searchNewRoom();
-        };
     }
 );

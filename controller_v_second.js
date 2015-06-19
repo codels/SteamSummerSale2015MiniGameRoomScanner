@@ -13,12 +13,6 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
         vm.foundedRooms = [];
         vm.stalkRoom = 0;
 
-        vm.start = function () {
-            vm.is_start = true;
-            vm.currentRoomId = vm.minRoomId;
-            vm.scanRoomsStatus();
-        };
-
         vm.startSearch = function () {
             vm.newRooms = [];
             vm.is_start = true;
@@ -32,7 +26,7 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
         };
 
         vm.stalk = function () {
-            $http.post('./account_in_room.php', {
+            $http.post('./search_accounts_in_room.php', {
                 room_id: vm.stalkRoom,
                 account_id: 133090071
             }).then(function (response) {
@@ -50,7 +44,7 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
             if (!vm.is_start) {
                 return;
             }
-            $http.post('./room_status.php', {room_id: vm.currentRoomId}).then(function (response) {
+            $http.post('./room_info_json.php', {room_id: vm.currentRoomId}).then(function (response) {
                 if (!response || response.data.status == -1) {
                     $timeout(function () {
                         vm.searchNewRoom();
@@ -77,7 +71,7 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
 
         vm.startRefreshing = function (roomId) {
             console.log('refreshing' + roomId);
-            $http.post('./account_in_room.php', {
+            $http.post('./search_accounts_in_room.php', {
                 room_id: roomId,
                 account_id: vm.accountsSearch
             }).then(function (response) {

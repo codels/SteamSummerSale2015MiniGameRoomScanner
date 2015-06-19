@@ -69,16 +69,7 @@ foreach ($objectsAllRooms as $objectRoom) {
             }
         }
     }
-/*
-    $objectRoom->me = false;
 
-    foreach ($roomsMe as $room) {
-        if ($room->id == $objectRoom->id) {
-            $objectRoom->me = true;
-            break;
-        }
-    }
-*/
     // format
     $objectRoom->possible_max_level_format = number_format($objectRoom->possible_max_level, 0, '.', ' ');
     $objectRoom->clicks_format = number_format($objectRoom->clicks, 0, '.', ' ');
@@ -164,7 +155,6 @@ echo '</tbody></table>';
                 return (sort_value != undefined) ? sort_value : cell_value;
             }
         });
-        //$("#options").tablesorter({sortList: [[0,0]], headers: { 3:{sorter: false}, 4:{sorter: false}}});
     });
 
     function updateRooms() {
