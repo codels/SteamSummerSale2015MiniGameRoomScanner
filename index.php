@@ -25,7 +25,6 @@ mb_internal_encoding('UTF-8');
 $objectsAllRooms = json_decode(file_get_contents('http://steamga.me/data/api/all.json'));
 $objectsTopRooms = json_decode(file_get_contents('http://steamga.me/data/api/leaderboard.json'));
 $roomsName = json_decode(file_get_contents('./rooms_name.json'));
-$roomsMe = json_decode(file_get_contents('./me_rooms.json'));
 
 $endDateTime = new DateTime();
 $endDateTime->setTime(19, 00, 00);
