@@ -1,4 +1,4 @@
-applicationKPP.controller('controllerVSecond', function ($http, $timeout, $interval) {
+applicationKPP.controller('controllerVSecond', function ($http, $timeout, ServiceSoundAlarm) {
         var vm = this;
 
         vm.version = "0.2 —  Bizarre";
@@ -26,13 +26,12 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
         };
 
         vm.stalk = function () {
-            $http.post('./search_accounts_in_room.php', {
+            $http.post('./search_accounts_in_room_json.php', {
                 room_id: vm.stalkRoom,
                 account_id: 133090071
             }).then(function (response) {
-                if (!response.data.exists) {
-                    var alert = new Audio('alert.mp3');
-                    alert.play();
+                if (_.has(response.data, 'exists') && !response.data.exists) {
+                    ServiceSoundAlarm.playSound();
                 }
                 $timeout(function () {
                         vm.stalk();
@@ -71,7 +70,7 @@ applicationKPP.controller('controllerVSecond', function ($http, $timeout, $inter
 
         vm.startRefreshing = function (roomId) {
             console.log('refreshing' + roomId);
-            $http.post('./search_accounts_in_room.php', {
+            $http.post('./search_accounts_in_room_json.php', {
                 room_id: roomId,
                 account_id: vm.accountsSearch
             }).then(function (response) {

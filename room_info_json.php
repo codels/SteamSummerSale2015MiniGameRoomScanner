@@ -34,7 +34,7 @@ if (!empty($info['status']) && $info['status'] == 3) {
 } else {
     $context = stream_context_create(array('http' =>
         array(
-            'timeout' => 5,
+            'timeout' => 3,
         )
     ));
 
