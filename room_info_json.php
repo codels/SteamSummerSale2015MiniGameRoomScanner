@@ -16,60 +16,44 @@ if (empty($_REQUEST['room_id'])) {
 
 $roomId = intval($_REQUEST['room_id']);
 
-require_once 'config.php';
-
-$db = new PDO('mysql:host='.$dbHost.';dbname='.$dbName, $dbUser, $dbPass);
-$db->query('SET NAMES utf8');
-
-$statementSearch = $db->prepare('SELECT `status`, `level` FROM `rooms` WHERE `id` = ?');
-$statementSearch->execute(array($roomId));
-$info = $statementSearch->fetch(PDO::FETCH_ASSOC);
 $players = -1;
 $level = -1;
 $status = -1;
 
-if (!empty($info['status']) && $info['status'] == 3) {
-    $level = $info['level'];
-    $status = $info['status'];
-} else {
-    $context = stream_context_create(array('http' =>
-        array(
-            'timeout' => 3,
-        )
-    ));
+$context = stream_context_create(array('http' =>
+    array(
+        'timeout' => 3,
+    )
+));
 
-    $response = @file_get_contents('http://steamapi-a.akamaihd.net/ITowerAttackMiniGameService/GetGameData/v0001/?gameid='.$roomId.'&include_stats=1', null, $context);
+$response = @file_get_contents('http://steamapi-a.akamaihd.net/ITowerAttackMiniGameService/GetGameData/v0001/?gameid='.$roomId.'&include_stats=1', null, $context);
 
-    if ($response === false) {
-        return;
+if ($response === false) {
+    return;
+}
+
+$gameInfo = json_decode($response);
+
+if ($gameInfo === false) {
+    return;
+}
+
+if (!property_exists($gameInfo, 'response')) {
+    return;
+}
+
+if (property_exists($gameInfo->response, 'game_data')) {
+    if (property_exists($gameInfo->response->game_data, 'level')) {
+        $level = $gameInfo->response->game_data->level;
     }
-
-    $gameInfo = json_decode($response);
-
-    if ($gameInfo === false) {
-        return;
+    if (property_exists($gameInfo->response->game_data, 'status')) {
+        $status = $gameInfo->response->game_data->status;
     }
-
-    if (!property_exists($gameInfo, 'response')) {
-        return;
+}
+if (property_exists($gameInfo->response, 'stats')) {
+    if (property_exists($gameInfo->response->stats, 'num_players')) {
+        $players = $gameInfo->response->stats->num_players;
     }
-
-    if (property_exists($gameInfo->response, 'game_data')) {
-        if (property_exists($gameInfo->response->game_data, 'level')) {
-            $level = $gameInfo->response->game_data->level;
-        }
-        if (property_exists($gameInfo->response->game_data, 'status')) {
-            $status = $gameInfo->response->game_data->status;
-        }
-    }
-    if (property_exists($gameInfo->response, 'stats')) {
-        if (property_exists($gameInfo->response->stats, 'num_players')) {
-            $players = $gameInfo->response->stats->num_players;
-        }
-    }
-
-    $statementUpdate = $db->prepare('REPLACE INTO `rooms` (`id`, `level`, `status`, `players`) VALUES (?, ?, ?, ?)');
-    $statementUpdate->execute(array($roomId, $level, $status, $players));
 }
 
 echo json_encode(array(
